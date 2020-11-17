@@ -10,6 +10,7 @@ from utils import draw_boxes, helpers, save_boxes
 import logging
 import time
 import datetime
+import torch
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader
@@ -38,7 +39,7 @@ def test_net_batch(args, net, gpu_id, dataset, transform, thresh):
     done = 0
 
     for batch_idx, (images, targets, metadata) in enumerate(data_loader):
-
+        print(batch_idx)
         done = done + len(images)
         logging.debug('processing {}/{}'.format(done, total))
 
@@ -94,7 +95,8 @@ def test_net_batch(args, net, gpu_id, dataset, transform, thresh):
 
 def test_gtdb(args):
 
-    gpu_id = 0
+    gpu_id = -1
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if args.cuda:
         gpu_id = helpers.get_freer_gpu()
         torch.cuda.set_device(gpu_id)
@@ -106,9 +108,9 @@ def test_gtdb(args):
     net = build_ssd(args, 'test', exp_cfg[args.cfg], gpu_id, args.model_type, num_classes)
 
     logging.debug(net)
-    net.to(gpu_id)
+    net.to(device)
     net = nn.DataParallel(net)
-    net.load_state_dict(torch.load(args.trained_model, map_location={'cuda:1':'cuda:0'}))
+    net.load_state_dict(torch.load(args.trained_model, map_location=torch.device("cpu")))
     net.eval()
     logging.debug('Finished loading model!')
 
@@ -117,7 +119,7 @@ def test_gtdb(args):
                             target_transform=GTDBAnnotationTransform())
 
     if args.cuda:
-        net = net.to(gpu_id)
+        net = net.to(device)
         cudnn.benchmark = True
 
     # evaluation

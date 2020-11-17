@@ -174,6 +174,7 @@ class GTDBDetection(data.Dataset):
 
         for id in self.ids:
             image = cv2.imread(self._imgpath % id, cv2.IMREAD_COLOR)
+            # print(image[0][0], self._imgpath % id)
             self.images[id[1]] = image
 
     def read_gt_annotations(self):

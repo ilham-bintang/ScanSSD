@@ -13,7 +13,7 @@ def split(args):
     gt_dir, pdf_name, out_dir, ext = args
 
     file_path = os.path.join(gt_dir, pdf_name + "." + ext)
-    img_dir = '/home/psm2208/data/GTDB/images/'
+    img_dir = '/Users/ilhambintang/Latihan/riset/ScanSSD/data/GTDB/images/'
 
     # create a map of page to list of math boxes
     map = {}
