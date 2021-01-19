@@ -129,4 +129,7 @@ data/ssd_dataloader.py
 
 
 # ignore image
-imgaes/
+visualize/
+data/GTDB/*
+AMATH512_e1GTDB.pth
+images/

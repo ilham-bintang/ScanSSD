@@ -12,8 +12,8 @@ import numpy as np
 from multiprocessing import Pool
 from cv2.dnn import NMSBoxes
 from scipy.ndimage.measurements import label
-from gtdb import fit_box
-from gtdb import feature_extractor
+import fit_box
+import feature_extractor
 import argparse
 import shutil
 
@@ -179,6 +179,7 @@ def preprocess_math_regions(math_regions, image):
 def voting_algo(params):
 
     args, math_regions, pdf_name, page_num = params
+    page_num = int(page_num)
     print('Processing ', pdf_name, ' > ', page_num)
 
     image = cv2.imread(os.path.join(args.home_images,pdf_name,str(int(page_num+1))+".png"))
@@ -248,8 +249,8 @@ def stitch(args):
             current_math = math_regions[pdf_name][math_regions[pdf_name][:,0] == page_num]
             voting_ip_list.append([args, np.delete(current_math, 0, 1), pdf_name, page_num])
 
-    pool = Pool(processes=args.num_workers)
-    out = pool.map(voting_algo, voting_ip_list)
+    # pool = Pool(processes=args.num_workers)
+    out = [voting_algo(ip) for ip in voting_ip_list]
 
     for ip, final_math in zip(voting_ip_list, out):
 
@@ -276,8 +277,12 @@ def stitch(args):
             print("Exception while processing ", pdf_name, " ", page_num, " ", sys.exc_info(), e)
 
 def convert_to_binary(image):
-
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    try:
+        print(image)
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        print(gray_image)
+    except Exception as e:
+        print(e)
 
     im_bw = np.zeros(gray_image.shape)
     im_bw[gray_image > 127] = 0

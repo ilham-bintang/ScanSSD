@@ -1,10 +1,12 @@
+
 '''
 This file contains functions to test and save the results
 '''
 from __future__ import print_function
+
 import os
 import argparse
-import torch.backends.cudnn as cudnn
+# import torch.backends.cudnn as cudnn
 from ssd import build_ssd
 from utils import draw_boxes, helpers, save_boxes
 import logging
@@ -39,7 +41,6 @@ def test_net_batch(args, net, gpu_id, dataset, transform, thresh):
     done = 0
 
     for batch_idx, (images, targets, metadata) in enumerate(data_loader):
-        print(batch_idx)
         done = done + len(images)
         logging.debug('processing {}/{}'.format(done, total))
 
@@ -47,8 +48,9 @@ def test_net_batch(args, net, gpu_id, dataset, transform, thresh):
             images = images.cuda()
             targets = [ann.cuda() for ann in targets]
         else:
-            images = Variable(images)
-            targets = [Variable(ann, volatile=True) for ann in targets]
+            with torch.no_grad():
+                images = Variable(images)
+                targets = [Variable(ann) for ann in targets]
 
         y, debug_boxes, debug_scores = net(images)  # forward pass
         detections = y.data
@@ -120,7 +122,7 @@ def test_gtdb(args):
 
     if args.cuda:
         net = net.to(device)
-        cudnn.benchmark = True
+        # cudnn.benchmark = True
 
     # evaluation
     test_net_batch(args, net, gpu_id, dataset,

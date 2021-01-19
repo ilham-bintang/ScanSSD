@@ -1,1 +1,1 @@
-python test.py --dataset_root . --trained_model AMATH512_e1GTDB.pth --visual_threshold 0.25 --exp_name test_real_world_iter1 --model_type 512 --cfg hboxes512 --padding 0 2 --kernel 1 5 --batch_size 8 --num_worker 1
+python test.py --dataset_root . --trained_model AMATH512_e1GTDB.pth --visual_threshold 0.25 --exp_name test_real_world_iter1 --model_type 512 --cfg hboxes512 --padding 0 2 --kernel 1 5 --batch_size 8 --num_worker 0

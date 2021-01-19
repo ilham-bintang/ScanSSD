@@ -3,7 +3,7 @@ This file contains functions to visualize the heatmap and detected bounding boxe
 '''
 
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('tkagg')
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
